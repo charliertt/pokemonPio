@@ -1,51 +1,19 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import ZoneNode from '../components/ZoneNode.vue'
+import { useZonesStore } from '../stores/zones'
 
 const router = useRouter()
-
-// Definición de tipos
-type ZoneState = 'locked' | 'unlocked' | 'completed'
-
-interface Zone {
-  id: number
-  nombre: string
-  nivelRecomendado: number
-  estado: ZoneState
-}
-
-// Estado reactivo del mapa
-const mapState = reactive({
-  zonas: [
-    { id: 1, nombre: 'Bosque Verde', nivelRecomendado: 5, estado: 'unlocked' },
-    { id: 2, nombre: 'Cueva Oscura', nivelRecomendado: 10, estado: 'locked' },
-    { id: 3, nombre: 'Monte Plateado', nivelRecomendado: 15, estado: 'locked' },
-    { id: 4, nombre: 'Lago Cristalino', nivelRecomendado: 20, estado: 'locked' },
-    { id: 5, nombre: 'Torre Final', nivelRecomendado: 25, estado: 'locked' }
-  ] as Zone[]
-})
+const zonesStore = useZonesStore()
 
 // Lógica para desbloquear zona y avanzar
 const handleCompleteZone = (id: number) => {
-  const currentIndex = mapState.zonas.findIndex(z => z.id === id)
-  if (currentIndex === -1) return
-
-  // Marcar actual como completada
-  mapState.zonas[currentIndex].estado = 'completed'
-
-  // Desbloquear siguiente si existe
-  if (currentIndex + 1 < mapState.zonas.length) {
-    if (mapState.zonas[currentIndex + 1].estado === 'locked') {
-      mapState.zonas[currentIndex + 1].estado = 'unlocked'
-    }
-  }
+  zonesStore.completeZone(id)
 }
 
 // Navegación segura
 const handleZoneClick = (id: number) => {
-  const zona = mapState.zonas.find(z => z.id === id)
-  if (zona && zona.estado !== 'locked') {
+  if (zonesStore.isZoneAccessible(id)) {
     router.push(`/zone/${id}`)
   }
 }
@@ -64,7 +32,7 @@ const getPosition = (index: number): 'left' | 'center' | 'right' => {
     
     <div class="map-container">
       <ZoneNode
-        v-for="(zona, index) in mapState.zonas"
+        v-for="(zona, index) in zonesStore.zonas"
         :key="zona.id"
         :id="zona.id"
         :nombre="zona.nombre"
@@ -75,6 +43,11 @@ const getPosition = (index: number): 'left' | 'center' | 'right' => {
         @complete="handleCompleteZone"
       />
     </div>
+    
+    <!-- Botón de reset discreto -->
+    <button class="reset-btn" @click="zonesStore.resetProgress" title="Resetear todo el progreso">
+      🔄 Reset Progress
+    </button>
   </div>
 </template>
 
@@ -113,5 +86,33 @@ const getPosition = (index: number): 'left' | 'center' | 'right' => {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+/* --- Reset Button --- */
+.reset-btn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+
+.reset-btn:hover {
+  opacity: 1;
+  background: rgba(255, 107, 107, 0.15);
+  border-color: #ff6b6b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+.reset-btn:active {
+  transform: scale(0.98);
 }
 </style>
