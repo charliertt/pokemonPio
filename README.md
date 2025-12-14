@@ -66,11 +66,8 @@ Glow sutil
 
 Botones con hover ligero
 
-Layout responsive (desktop / mobile)
 
-<img width="990" height="556" alt="image" src="https://github.com/user-attachments/assets/38ae6a8a-2604-4cef-b5df-ce93b106dc99" />
-<img width="1099" height="580" alt="image" src="https://github.com/user-attachments/assets/383d510f-e8c7-4743-b8f6-457730cfd139" />
-<img width="970" height="589" alt="image" src="https://github.com/user-attachments/assets/ba49a647-0691-4e10-838d-9f87dcb95f09" />
+
 
 
 
