@@ -20,7 +20,7 @@ El diseño sigue una estética **dark/neón**, con tarjetas (cards) limpias, bor
 
 ---
 
-## 🧩 Tecnologías Utilizadas
+##  Tecnologías Utilizadas
 
 - **Vue 3**
 - **Composition API**
